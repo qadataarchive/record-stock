@@ -1,225 +1,349 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>설비 일일점검표</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; background-color: #f9f9f9; }
-        h2 { text-align: center; margin-bottom: 20px; }
-        .form-group { background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 15px; }
-        label { font-weight: bold; display: block; margin-top: 10px; margin-bottom: 5px; }
-        input[type="text"], textarea { width: 100%; padding: 10px; box-sizing: border-box; font-size: 15px; border: 1px solid #ccc; border-radius: 4px; }
-        
-        .category-title { font-size: 18px; font-weight: bold; margin-top: 25px; margin-bottom: 10px; border-bottom: 2px solid #28a745; padding-bottom: 5px; color: #333; }
-        .check-item { background: #fff; padding: 12px 15px; margin-bottom: 10px; border-radius: 6px; border: 1px solid #e0e0e0; display: flex; flex-direction: column; gap: 8px; }
-        .check-item-title { font-weight: 600; font-size: 15px; color: #2c3e50; }
-        .check-item-sub { font-size: 13px; color: #666; margin-top: -4px; }
-        .radio-group { display: flex; gap: 20px; margin-top: 4px; }
-        .radio-group label { font-weight: normal; margin: 0; cursor: pointer; display: flex; align-items: center; gap: 5px; }
-
-        button { width: 100%; padding: 15px; background: #28a745; color: white; border: none; font-size: 18px; margin-top: 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #218838; }
-        button:disabled { background: #6c757d; cursor: not-allowed; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일일점검표 (입고장)</title>
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --border-color: #dadce0;
+      --bg-color: #f8f9fa;
+    }
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background-color: var(--bg-color);
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    h2 {
+      text-align: center;
+      color: #202124;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--primary-color);
+      padding-bottom: 10px;
+    }
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    /* 고정된 입력창 전용 스타일 */
+    input[readonly] {
+      background-color: #e9ecef;
+      color: #495057;
+      cursor: not-allowed;
+    }
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+    .section-title {
+      font-weight: bold;
+      background: #e8f0fe;
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin-top: 20px;
+      margin-bottom: 12px;
+      color: #1967d2;
+      font-size: 15px;
+    }
+    .check-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f3f4;
+    }
+    .check-item span {
+      font-size: 14px;
+    }
+    .radio-group label {
+      font-weight: normal;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    /* 온도/습도 입력창 스타일 */
+    .input-inline {
+      width: 120px !important;
+      text-align: right;
+      padding: 6px 10px !important;
+    }
+    .input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-submit {
+      width: 100%;
+      background-color: var(--primary-color);
+      color: #fff;
+      padding: 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 24px;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #1557b0;
+    }
+    .btn-submit:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
-    <h2>🛠️ 일일 점검표</h2>
-    <form id="checkForm">
-        <div class="form-group">
-            <label for="location">점검 장소/설비</label>
-            <input type="text" id="location" value="입고장" readonly>
 
-            <label for="worker">작업자 이름</label>
-            <input type="text" id="worker" placeholder="이름 입력" required>
-        </div>
+<div class="container">
+  <h2>📋 일일점검표 (입고장)</h2>
+  
+  <form id="checkForm">
+    <!-- 기본 정보 -->
+    <div class="form-group">
+      <label for="location">점검장소</label>
+      <!-- 📌 '입고장'으로 고정 및 readonly 처리 -->
+      <input type="text" id="location" value="입고장" readonly>
+    </div>
+    
+    <div class="form-group">
+      <label for="worker">작성자</label>
+      <input type="text" id="worker" required placeholder="성함 입력">
+    </div>
 
-        <!-- 안전 -->
-        <div class="category-title">안전</div>
-        <div class="check-item">
-            <span class="check-item-title">1. 소화기는 정위치에 있는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_1" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_1" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">2. 시건장치의 잠금기능은 정상인가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_2" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_2" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">3. 화재의 위험에 노출되어 있지 않는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_3" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_3" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
+    <!-- 1. 안전 점검 -->
+    <div class="section-title">1. 안전 점검</div>
+    <div class="check-item">
+      <span>소화기 정위치</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item1" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item1" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>시건장치 잠금기능</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item2" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item2" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>화재 위험 노출 여부</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item3" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item3" value="불량"> 불량</label>
+      </div>
+    </div>
 
-        <!-- 5S -->
-        <div class="category-title">5S</div>
-        <div class="check-item">
-            <span class="check-item-title">4. 청소상태는 양호한가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_4" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_4" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">5. 입고된 자재는 정위치에 적재되었는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_5" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_5" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">6. 불필요한 물건이 있지는 않은가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_6" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_6" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">7. 입고제품의 포장상태는 양호한가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_7" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_7" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">8. 부적합 제품은 혼합되어 있지 않는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_8" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_8" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
+    <!-- 2. 5S (환경) 점검 -->
+    <div class="section-title">2. 5S 점검</div>
+    <div class="check-item">
+      <span>청소상태</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item4" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item4" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>자재 정위치 적재</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item5" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item5" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>불필요한 물건 여부</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item6" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item6" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>입고제품 포장상태</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item7" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item7" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>부적합 제품 혼합 여부</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item8" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item8" value="불량"> 불량</label>
+      </div>
+    </div>
 
-        <!-- 품질 -->
-        <div class="category-title">품질</div>
-        <div class="check-item">
-            <span class="check-item-title">9. 품질이상이 발생할 자재는 없는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_9" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_9" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">10. 환풍은 주기적으로 시행하는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_10" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_10" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">11. 실내온도는 관리 되는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_11" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_11" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
+    <!-- 3. 품질 점검 -->
+    <div class="section-title">3. 품질 점검</div>
+    <div class="check-item">
+      <span>품질이상 발생 자재 여부</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item9" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item9" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>주기적 환기</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item10" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item10" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>실내온도 관리</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item11" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item11" value="불량"> 불량</label>
+      </div>
+    </div>
 
-        <!-- 기타 -->
-        <div class="category-title">기타</div>
-        <div class="check-item">
-            <span class="check-item-title">12. 빗물이 스며들지 않는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_12" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_12" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">13. 담당자외 출입 통제는 되어가고있는가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_13" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_13" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">14. 입고제품 식별이 용이한가.</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_14" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_14" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">15. 일일 온도체크 </span>
-            <span class="check-item-sub">관리기준 : 0℃ ~ 30℃ (30℃ 이하)</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_15" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_15" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
-        <div class="check-item">
-            <span class="check-item-title">16. 일일 습도체크 </span>
-            <span class="check-item-sub">관리기준 : ACTUAL</span>
-            <div class="radio-group">
-                <label><input type="radio" name="item_16" value="양호" required> 🟢 양호</label>
-                <label><input type="radio" name="item_16" value="부적합"> 🔴 부적합</label>
-            </div>
-        </div>
+    <!-- 4. 기타 및 환경 점검 -->
+    <div class="section-title">4. 기타 점검</div>
+    <div class="check-item">
+      <span>빗물 침수 여부</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item12" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item12" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>담당자외 출입 통제</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item13" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item13" value="불량"> 불량</label>
+      </div>
+    </div>
+    <div class="check-item">
+      <span>입고제품 식별 용이성</span>
+      <div class="radio-group">
+        <label><input type="radio" name="item14" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item14" value="불량"> 불량</label>
+      </div>
+    </div>
+    
+    <!-- 온도/습도 직접 입력 란 -->
+    <div class="check-item">
+      <span>일일 온도체크</span>
+      <div class="input-wrap">
+        <input type="text" id="tempInput" class="input-inline" placeholder="22" required> ℃
+      </div>
+    </div>
+    <div class="check-item">
+      <span>일일 습도체크</span>
+      <div class="input-wrap">
+        <input type="text" id="humidityInput" class="input-inline" placeholder="45" required> %
+      </div>
+    </div>
 
-        <div class="form-group" style="margin-top: 20px;">
-            <label for="note">특이사항 / 조치내용</label>
-            <textarea id="note" rows="3" placeholder="특이사항이 있을 경우 작성"></textarea>
-        </div>
+    <!-- 특이사항 -->
+    <div class="form-group" style="margin-top: 20px;">
+      <label for="note">특이사항</label>
+      <textarea id="note" placeholder="특이사항이 있을 경우 작성해주세요."></textarea>
+    </div>
 
-        <button type="submit" id="subBtn">점검 완료 제출</button>
-    </form>
+    <button type="submit" id="submitBtn" class="btn-submit">제출하기</button>
+  </form>
+</div>
 
-    <script>
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbwliCucW6-hEPyCLSZaB7OmmgSrc4_xu5ydYFIwVJV2yuUxLqu78tLV07EGWVpyJE7U/exec";
+<script>
+  // ⚠️ 본인의 Google Apps Script 웹 앱 URL로 반드시 변경하세요.
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/YOUR_EXEC_ID/exec";
 
-        document.getElementById('checkForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('subBtn');
-            btn.innerText = "전송 중...";
-            btn.disabled = true;
+  // 라디오 버튼 선택 값 가져오기 유틸 함수
+  function getRadioValue(name) {
+    const selected = document.querySelector(`input[name="${name}"]:checked`);
+    return selected ? selected.value : "";
+  }
 
-            const payload = {
-                location: document.getElementById('location').value,
-                worker: document.getElementById('worker').value,
-                note: document.getElementById('note').value,
-                items: {
-                    "소화기 정위치": document.querySelector('input[name="item_1"]:checked')?.value || "",
-                    "시건장치 잠금기능": document.querySelector('input[name="item_2"]:checked')?.value || "",
-                    "화재 위험 노출 여부": document.querySelector('input[name="item_3"]:checked')?.value || "",
-                    "청소상태": document.querySelector('input[name="item_4"]:checked')?.value || "",
-                    "자재 정위치 적재": document.querySelector('input[name="item_5"]:checked')?.value || "",
-                    "불필요한 물건 여부": document.querySelector('input[name="item_6"]:checked')?.value || "",
-                    "입고제품 포장상태": document.querySelector('input[name="item_7"]:checked')?.value || "",
-                    "부적합 제품 혼합 여부": document.querySelector('input[name="item_8"]:checked')?.value || "",
-                    "품질이상 발생 자재 여부": document.querySelector('input[name="item_9"]:checked')?.value || "",
-                    "주기적 환기": document.querySelector('input[name="item_10"]:checked')?.value || "",
-                    "실내온도 관리": document.querySelector('input[name="item_11"]:checked')?.value || "",
-                    "빗물 침수 여부": document.querySelector('input[name="item_12"]:checked')?.value || "",
-                    "담당자외 출입 통제": document.querySelector('input[name="item_13"]:checked')?.value || "",
-                    "입고제품 식별 용이성": document.querySelector('input[name="item_14"]:checked')?.value || "",
-                    "일일 온도체크": document.querySelector('input[name="item_15"]:checked')?.value || "",
-                    "일일 습도체크": document.querySelector('input[name="item_16"]:checked')?.value || ""
-                }
-            };
+  // 폼 제출 이벤트 핸들러
+  document.getElementById("checkForm").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-            fetch(GAS_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert('점검 내용이 성공적으로 제출되었습니다!');
-                document.getElementById('checkForm').reset();
-            })
-            .catch(err => {
-                alert('점검 제출이 완료되었습니다.');
-                document.getElementById('checkForm').reset();
-            })
-            .finally(() => {
-                btn.innerText = "점검 완료 제출";
-                btn.disabled = false;
-            });
-        });
-    </script>
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "제출 중...";
+
+    // 온도 / 습도 입력값 가져오기
+    const tempVal = document.getElementById("tempInput").value.trim();
+    const humidityVal = document.getElementById("humidityInput").value.trim();
+
+    // 시트 매핑 데이터 객체 구성
+    const payload = {
+      location: document.getElementById("location").value, // '입고장' 값 전송
+      worker: document.getElementById("worker").value,
+      note: document.getElementById("note").value,
+      items: {
+        "소화기 정위치": getRadioValue("item1"),
+        "시건장치 잠금기능": getRadioValue("item2"),
+        "화재 위험 노출 여부": getRadioValue("item3"),
+        "청소상태": getRadioValue("item4"),
+        "자재 정위치 적재": getRadioValue("item5"),
+        "불필요한 물건 여부": getRadioValue("item6"),
+        "입고제품 포장상태": getRadioValue("item7"),
+        "부적합 제품 혼합 여부": getRadioValue("item8"),
+        "품질이상 발생 자재 여부": getRadioValue("item9"),
+        "주기적 환기": getRadioValue("item10"),
+        "실내온도 관리": getRadioValue("item11"),
+        "빗물 침수 여부": getRadioValue("item12"),
+        "담당자외 출입 통제": getRadioValue("item13"),
+        "입고제품 식별 용이성": getRadioValue("item14"),
+        "일일 온도체크": tempVal ? tempVal + "℃" : "",
+        "일일 습도체크": humidityVal ? humidityVal + "%" : ""
+      }
+    };
+
+    // Google Apps Script 웹 앱으로 데이터 전송
+    fetch(GAS_WEB_APP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.result === "success") {
+        alert("점검표 제출이 성공적으로 완료되었습니다!");
+        
+        // 폼 리셋 후 '입고장' 값 재유지
+        document.getElementById("checkForm").reset();
+        document.getElementById("location").value = "입고장";
+      } else {
+        alert("제출 중 오류가 발생했습니다: " + data.error);
+      }
+    })
+    .catch(error => {
+      alert("네트워크 오류가 발생했습니다. 앱스스크립트 배포 상태를 확인해주세요.");
+      console.error("Error:", error);
+    })
+    .finally(() => {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "제출하기";
+    });
+  });
+</script>
+
 </body>
 </html>
