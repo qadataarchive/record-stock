@@ -41,7 +41,7 @@
       margin-bottom: 6px;
       font-size: 14px;
     }
-    input[type="text"], textarea {
+    input[type="text"], input[type="file"], textarea {
       width: 100%;
       padding: 10px;
       border: 1px solid var(--border-color);
@@ -259,10 +259,15 @@
       </div>
     </div>
 
-    <!-- 특이사항 -->
+    <!-- 특이사항 및 사진 첨부 -->
     <div class="form-group" style="margin-top: 20px;">
       <label for="note">특이사항</label>
       <textarea id="note" placeholder="특이사항이 있을 경우 작성해주세요."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="photo">사진 첨부 (최대 10개)</label>
+      <input type="file" id="photo" accept="image/*" multiple>
     </div>
 
     <button type="submit" id="submitBtn" class="btn-submit">제출하기</button>
@@ -279,51 +284,103 @@
     return selected ? selected.value : "";
   }
 
+  // YYYYMMDD_HHMMSS 형식 생성 함수
+  function getFormattedTimestamp() {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const dateStr = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+    const timeStr = pad(now.getHours()) + pad(now.getMinutes()) + pad(now.getSeconds());
+    return `${dateStr}_${timeStr}`;
+  }
+
+  // 단일 파일 Base64 데이터 변환 함수
+  function fileToBase64(file, newFileName) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result;
+        const base64Data = result.split(',')[1];
+        resolve({
+          base64: base64Data,
+          mimeType: file.type,
+          name: newFileName
+        });
+      };
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  }
+
   // 폼 제출 이벤트 핸들러
-  document.getElementById("checkForm").addEventListener("submit", function(e) {
+  document.getElementById("checkForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    const fileInput = document.getElementById("photo");
+    const files = Array.from(fileInput.files);
+
+    // 파일 개수 제한 체크 (최대 10개)
+    if (files.length > 10) {
+      alert("사진은 최대 10개까지만 첨부할 수 있습니다.");
+      return;
+    }
 
     const submitBtn = document.getElementById("submitBtn");
     submitBtn.disabled = true;
     submitBtn.innerText = "제출 중...";
 
-    // 온도 / 습도 입력값 가져오기
+    const locationVal = document.getElementById("location").value.trim();
+    const workerVal = document.getElementById("worker").value.trim();
+    const timestamp = getFormattedTimestamp();
     const tempVal = document.getElementById("tempInput").value.trim();
     const humidityVal = document.getElementById("humidityInput").value.trim();
 
-    // 시트 매핑 데이터 객체 구성
-    const payload = {
-      location: document.getElementById("location").value, // '입고장' 값 전송
-      worker: document.getElementById("worker").value,
-      note: document.getElementById("note").value,
-      items: {
-        "소화기 정위치": getRadioValue("item1"),
-        "시건장치 잠금기능": getRadioValue("item2"),
-        "화재 위험 노출 여부": getRadioValue("item3"),
-        "청소상태": getRadioValue("item4"),
-        "자재 정위치 적재": getRadioValue("item5"),
-        "불필요한 물건 여부": getRadioValue("item6"),
-        "입고제품 포장상태": getRadioValue("item7"),
-        "부적합 제품 혼합 여부": getRadioValue("item8"),
-        "품질이상 발생 자재 여부": getRadioValue("item9"),
-        "주기적 환기": getRadioValue("item10"),
-        "실내온도 관리": getRadioValue("item11"),
-        "빗물 침수 여부": getRadioValue("item12"),
-        "담당자외 출입 통제": getRadioValue("item13"),
-        "입고제품 식별 용이성": getRadioValue("item14"),
-        "일일 온도체크": tempVal ? tempVal + "℃" : "",
-        "일일 습도체크": humidityVal ? humidityVal + "%" : ""
-      }
-    };
+    try {
+      // 다중 파일 Base64 변환 및 파일명 지정 (점검장소_제출날짜시간_작성자이름_순번.확장자)
+      const filePromises = files.map((file, index) => {
+        const extMatch = file.name.match(/\.[^/.]+$/);
+        const ext = extMatch ? extMatch[0] : "";
+        const seq = files.length > 1 ? `_${index + 1}` : "";
+        const customFileName = `${locationVal}_${timestamp}_${workerVal}${seq}${ext}`;
+        return fileToBase64(file, customFileName);
+      });
 
-    // Google Apps Script 웹 앱으로 데이터 전송
-    fetch(GAS_WEB_APP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
+      const processedFiles = await Promise.all(filePromises);
+
+      // 시트 매핑 데이터 객체 구성
+      const payload = {
+        location: locationVal,
+        worker: workerVal,
+        note: document.getElementById("note").value,
+        files: processedFiles, // 이미지 데이터 배열 전달
+        items: {
+          "소화기 정위치": getRadioValue("item1"),
+          "시건장치 잠금기능": getRadioValue("item2"),
+          "화재 위험 노출 여부": getRadioValue("item3"),
+          "청소상태": getRadioValue("item4"),
+          "자재 정위치 적재": getRadioValue("item5"),
+          "불필요한 물건 여부": getRadioValue("item6"),
+          "입고제품 포장상태": getRadioValue("item7"),
+          "부적합 제품 혼합 여부": getRadioValue("item8"),
+          "품질이상 발생 자재 여부": getRadioValue("item9"),
+          "주기적 환기": getRadioValue("item10"),
+          "실내온도 관리": getRadioValue("item11"),
+          "빗물 침수 여부": getRadioValue("item12"),
+          "담당자외 출입 통제": getRadioValue("item13"),
+          "입고제품 식별 용이성": getRadioValue("item14"),
+          "일일 온도체크": tempVal ? tempVal + "℃" : "",
+          "일일 습도체크": humidityVal ? humidityVal + "%" : ""
+        }
+      };
+
+      // Google Apps Script 웹 앱으로 데이터 전송
+      const response = await fetch(GAS_WEB_APP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
       if (data.result === "success") {
         alert("점검표 제출이 성공적으로 완료되었습니다!");
         
@@ -333,15 +390,13 @@
       } else {
         alert("제출 중 오류가 발생했습니다: " + data.error);
       }
-    })
-    .catch(error => {
+    } catch (error) {
       alert("네트워크 오류가 발생했습니다. 앱스스크립트 배포 상태를 확인해주세요.");
       console.error("Error:", error);
-    })
-    .finally(() => {
+    } finally {
       submitBtn.disabled = false;
       submitBtn.innerText = "제출하기";
-    });
+    }
   });
 </script>
 
