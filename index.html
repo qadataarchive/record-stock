@@ -126,7 +126,6 @@
     <!-- 기본 정보 -->
     <div class="form-group">
       <label for="location">점검장소</label>
-      <!-- 📌 '입고장'으로 고정 및 readonly 처리 -->
       <input type="text" id="location" value="입고장" readonly>
     </div>
     
@@ -140,21 +139,21 @@
     <div class="check-item">
       <span>소화기 정위치</span>
       <div class="radio-group">
-        <label><input type="radio" name="item1" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item1" value="양호" required> 양호</label>
         <label><input type="radio" name="item1" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>시건장치 잠금기능</span>
       <div class="radio-group">
-        <label><input type="radio" name="item2" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item2" value="양호" required> 양호</label>
         <label><input type="radio" name="item2" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>화재 위험 노출 여부</span>
       <div class="radio-group">
-        <label><input type="radio" name="item3" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item3" value="양호" required> 양호</label>
         <label><input type="radio" name="item3" value="불량"> 불량</label>
       </div>
     </div>
@@ -164,35 +163,35 @@
     <div class="check-item">
       <span>청소상태</span>
       <div class="radio-group">
-        <label><input type="radio" name="item4" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item4" value="양호" required> 양호</label>
         <label><input type="radio" name="item4" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>자재 정위치 적재</span>
       <div class="radio-group">
-        <label><input type="radio" name="item5" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item5" value="양호" required> 양호</label>
         <label><input type="radio" name="item5" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>불필요한 물건 여부</span>
       <div class="radio-group">
-        <label><input type="radio" name="item6" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item6" value="양호" required> 양호</label>
         <label><input type="radio" name="item6" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>입고제품 포장상태</span>
       <div class="radio-group">
-        <label><input type="radio" name="item7" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item7" value="양호" required> 양호</label>
         <label><input type="radio" name="item7" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>부적합 제품 혼합 여부</span>
       <div class="radio-group">
-        <label><input type="radio" name="item8" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item8" value="양호" required> 양호</label>
         <label><input type="radio" name="item8" value="불량"> 불량</label>
       </div>
     </div>
@@ -202,21 +201,21 @@
     <div class="check-item">
       <span>품질이상 발생 자재 여부</span>
       <div class="radio-group">
-        <label><input type="radio" name="item9" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item9" value="양호" required> 양호</label>
         <label><input type="radio" name="item9" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>주기적 환기</span>
       <div class="radio-group">
-        <label><input type="radio" name="item10" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item10" value="양호" required> 양호</label>
         <label><input type="radio" name="item10" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>실내온도 관리</span>
       <div class="radio-group">
-        <label><input type="radio" name="item11" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item11" value="양호" required> 양호</label>
         <label><input type="radio" name="item11" value="불량"> 불량</label>
       </div>
     </div>
@@ -226,21 +225,21 @@
     <div class="check-item">
       <span>빗물 침수 여부</span>
       <div class="radio-group">
-        <label><input type="radio" name="item12" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item12" value="양호" required> 양호</label>
         <label><input type="radio" name="item12" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>담당자외 출입 통제</span>
       <div class="radio-group">
-        <label><input type="radio" name="item13" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item13" value="양호" required> 양호</label>
         <label><input type="radio" name="item13" value="불량"> 불량</label>
       </div>
     </div>
     <div class="check-item">
       <span>입고제품 식별 용이성</span>
       <div class="radio-group">
-        <label><input type="radio" name="item14" value="양호" checked> 양호</label>
+        <label><input type="radio" name="item14" value="양호" required> 양호</label>
         <label><input type="radio" name="item14" value="불량"> 불량</label>
       </div>
     </div>
@@ -275,16 +274,13 @@
 </div>
 
 <script>
-  // ⚠️ 본인의 Google Apps Script 웹 앱 URL로 반드시 변경하세요.
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbSkLH6av6J_SL4Cds_trKhmTUTxHCHtktprsFzmiHFO6sJ0HNg9qxiXzOZhYNr4Kb/exec";
 
-  // 라디오 버튼 선택 값 가져오기 유틸 함수
   function getRadioValue(name) {
     const selected = document.querySelector(`input[name="${name}"]:checked`);
     return selected ? selected.value : "";
   }
 
-  // YYYYMMDD_HHMMSS 형식 생성 함수
   function getFormattedTimestamp() {
     const now = new Date();
     const pad = (n) => String(n).padStart(2, '0');
@@ -293,7 +289,6 @@
     return `${dateStr}_${timeStr}`;
   }
 
-  // 단일 파일 Base64 데이터 변환 함수
   function fileToBase64(file, newFileName) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -311,14 +306,22 @@
     });
   }
 
-  // 폼 제출 이벤트 핸들러
   document.getElementById("checkForm").addEventListener("submit", async function(e) {
     e.preventDefault();
+
+    // 점검 항목 선택 여부 유효성 검사 (item1~item14)
+    for (let i = 1; i <= 14; i++) {
+      if (!getRadioValue(`item${i}`)) {
+        alert("모든 점검 항목을 체크해 주세요.");
+        const targetInput = document.querySelector(`input[name="item${i}"]`);
+        if (targetInput) targetInput.focus();
+        return;
+      }
+    }
 
     const fileInput = document.getElementById("photo");
     const files = Array.from(fileInput.files);
 
-    // 파일 개수 제한 체크 (최대 10개)
     if (files.length > 10) {
       alert("사진은 최대 10개까지만 첨부할 수 있습니다.");
       return;
@@ -335,7 +338,6 @@
     const humidityVal = document.getElementById("humidityInput").value.trim();
 
     try {
-      // 다중 파일 Base64 변환 및 파일명 지정 (점검장소_제출날짜시간_작성자이름_순번.확장자)
       const filePromises = files.map((file, index) => {
         const extMatch = file.name.match(/\.[^/.]+$/);
         const ext = extMatch ? extMatch[0] : "";
@@ -346,12 +348,11 @@
 
       const processedFiles = await Promise.all(filePromises);
 
-      // 시트 매핑 데이터 객체 구성
       const payload = {
         location: locationVal,
         worker: workerVal,
         note: document.getElementById("note").value,
-        files: processedFiles, // 이미지 데이터 배열 전달
+        files: processedFiles,
         items: {
           "소화기 정위치": getRadioValue("item1"),
           "시건장치 잠금기능": getRadioValue("item2"),
@@ -372,7 +373,6 @@
         }
       };
 
-      // Google Apps Script 웹 앱으로 데이터 전송
       const response = await fetch(GAS_WEB_APP_URL, {
         method: "POST",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -383,8 +383,6 @@
 
       if (data.result === "success") {
         alert("점검표 제출이 성공적으로 완료되었습니다!");
-        
-        // 폼 리셋 후 '입고장' 값 재유지
         document.getElementById("checkForm").reset();
         document.getElementById("location").value = "입고장";
       } else {
