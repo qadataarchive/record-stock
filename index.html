@@ -17,6 +17,7 @@
       padding: 20px;
       color: #333;
     }
+    /* 비밀번호 인증 전에는 전체 컨텐츠를 숨김 처리 */
     .container {
       max-width: 600px;
       margin: 0 auto;
@@ -24,6 +25,7 @@
       padding: 24px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      display: none; /* 기본 숨김 */
     }
     h2 {
       text-align: center;
@@ -119,7 +121,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="mainContainer">
   <h2>📋 일일점검표 (입고장)</h2>
   
   <form id="checkForm">
@@ -274,6 +276,21 @@
 </div>
 
 <script>
+  // 비밀번호 설정 (원하는 비밀번호로 수정하세요)
+  const APP_PASSWORD = "261001";
+
+  // 페이지 로드 시 바로 비밀번호 확인 실행
+  (function authenticate() {
+    const userInput = prompt("점검표를 작성하려면 비밀번호를 입력하세요:");
+    
+    if (userInput === APP_PASSWORD) {
+      document.getElementById("mainContainer").style.display = "block";
+    } else {
+      alert("비밀번호가 올바르지 않습니다. 접근이 제한됩니다.");
+      document.body.innerHTML = "<h2 style='text-align:center; margin-top:50px; color:#d93025;'>접근 권한이 없습니다.<br>페이지를 새로고침하여 비밀번호를 다시 입력하세요.</h2>";
+    }
+  })();
+
   const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzbSkLH6av6J_SL4Cds_trKhmTUTxHCHtktprsFzmiHFO6sJ0HNg9qxiXzOZhYNr4Kb/exec";
 
   function getRadioValue(name) {
